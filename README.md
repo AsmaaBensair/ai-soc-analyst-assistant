@@ -136,7 +136,7 @@ docker-compose up -d --build
 ### Run the pipeline (generate alerts)
 
 ```bash
-python pipeline.py
+python main.py --input data/logs.json --output data/results_docker.json       
 ```
 
 ### Launch the dashboard
