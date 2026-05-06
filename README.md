@@ -1,167 +1,206 @@
-# 🛡️ AI SOC Analyst Assistant — v2.0 (Production)
 
-A hybrid rule engine + LLM pipeline that reads **raw security logs** and
-generates structured threat alerts, scored by an automatic evaluator, and
-visualized in a professional Streamlit dashboard.
+# 🛡️ AI SOC Analyst Assistant
 
----
-
-## Architecture
-
-```
-data/logs.json  (raw syslog / HTTP access / unknown logs)
-        │
-        ▼
-log_parser.py          ← normalize logs, detect attack patterns, compute FP hint
-        │
-        ▼
-main.py  (Hybrid Engine)
-  ├─ Rule Engine        ← fast deterministic detection (XSS, SQLi, BruteForce…)
-  └─ LLM (llama3)       ← fallback for complex/ambiguous logs
-        │
-        ▼
-hallucination_guard.py ← validate IPs/URLs/users against source log
-        │
-        ▼
-data/results_docker.json
-        │
-   ┌────┴────────────────┐
-   ▼                     ▼
-evaluateur_complet.py   dashboard_soc.py  (Streamlit)
-data/evaluation_report.json
-```
+**Log Analysis · Threat Detection · SOC Automation · LLM-Powered**
 
 ---
 
-## File Summary
+## 📌 Overview
 
-| File | Role |
-|------|------|
-| `log_parser.py` | Normalize raw logs, detect patterns, compute FP/TP hints |
-| `prompts.py` | LLM system prompts with strict grounding rules |
-| `chain.py` | LangChain + Ollama LLM chain builder |
-| `hallucination_guard.py` | Validate generated alerts against source logs |
-| `main.py` | Pipeline orchestrator (rule engine + LLM) |
-| `evaluateur_complet.py` | Score alert quality on 10 dimensions |
-| `dashboard_soc.py` | Streamlit professional dashboard |
-| `docker-compose.yml` | Full containerized stack |
-| `requirements.txt` | Python dependencies |
-| `data/logs.json` | Input raw logs |
+AI SOC Analyst Assistant is an **enterprise-style cybersecurity platform** that analyzes raw logs, detects threats, correlates attacks, enriches with Threat Intelligence, and visualizes everything in an interactive dashboard.
+
+It simulates a real **SOC (Security Operations Center)** workflow using a combination of:
+
+* Rule-based detection
+* LLM-powered analysis (Llama3 / Ollama)
+* Threat Intelligence enrichment
+* SOAR automation
+* Analyst feedback loop
 
 ---
 
-## Quick Start (Local)
+## ⚙️ Features
+
+### 🔍 Detection Engine
+
+* Rule-based detection for:
+
+  * XSS, SQL Injection, Brute Force
+  * LFI, RCE, Scanning attacks
+* LLM-powered alert generation
+* Risk scoring + confidence estimation
+
+### 🔗 Correlation Engine
+
+* Multi-log attack correlation
+* Campaign detection (multi-step attacks)
+* Correlation risk scoring
+
+### 🔍 Threat Intelligence (TI)
+
+* IP reputation enrichment
+* Malicious / Suspicious classification
+* External validation to reduce false positives
+
+### ⚙️ SOAR (Automation)
+
+* Automated response playbooks
+* Ticket generation simulation
+* Escalation to SOC Level 2
+
+### 🗺️ MITRE ATT&CK Mapping
+
+* Tactics & techniques mapping
+* Heatmap visualization
+
+### 📊 Dashboard (Streamlit)
+
+* Interactive SOC dashboard
+* Alert investigation panel
+* Campaign visualization
+* Risk & severity analytics
+* Threat Intel panel
+* SOAR tracking
+
+### 📈 Evaluation & AI Quality
+
+* Alert quality scoring
+* True Positive / False Positive tracking
+* Hallucination detection for LLM outputs
+
+### 💬 Feedback Loop
+
+* Analyst TP/FP override
+* Calibration of false positive scoring
+* Continuous improvement mechanism
+
+---
+
+## 🏗️ Architecture
 
 ```bash
-# 1. Install dependencies
+Logs → Rule Engine → LLM Analysis → Alert Generation
+     → Correlation Engine → Threat Intel → SOAR
+     → Dashboard → Feedback Loop
+```
+
+---
+
+## 📂 Project Structure
+
+```bash
+soc_project/
+│
+├── dashboard_soc.py          # Streamlit dashboard
+├── feedback_loop.py          # Analyst feedback system
+├── threat_intel.py           # TI enrichment module
+├── rule_engine.py            # Detection rules
+├── correlation_engine.py     # Attack correlation
+├── evaluateur_complet.py     # Evaluation system
+│
+├── data/
+│   ├── results_docker.json
+│   ├── evaluation_report.json
+│
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 🚀 Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/soc_project.git
+cd soc_project
+```
+
+### 2. Install dependencies
+
+```bash
 pip install -r requirements.txt
-
-# 2. Start Ollama and pull the model
-ollama serve &
-ollama pull llama3
-
-# 3. Run the pipeline (rule engine + LLM)
-python main.py --input data/logs.json --output data/results_docker.json
-
-# 4. Run without LLM (rule engine only — fast, no Ollama needed)
-python main.py --input data/logs.json --output data/results_docker.json --no-llm
-
-# 5. Evaluate alert quality
-python evaluateur_complet.py --input data/results_docker.json --output data/evaluation_report.json
-
-# 6. Launch the dashboard
-streamlit run dashboard_soc.py
-# → open http://localhost:8501
 ```
 
----
-
-## Quick Start (Docker)
+### 3. (Optional) Run with Docker
 
 ```bash
-# Full stack (Ollama + pipeline + evaluator + dashboard)
-docker-compose up
-
-# Dashboard only (if results already exist)
-docker-compose up soc_dashboard
-
-# Open dashboard: http://localhost:8501
+docker-compose up -d --build
 ```
 
 ---
 
-## CLI Options
+## ▶️ Usage
 
-### main.py
-```
---input    Path to raw logs JSON     (default: data/logs.json)
---output   Path to results JSON      (default: data/results_docker.json)
---limit    Max logs to process       (default: all)
---skip-fp  Skip obvious FPs pre-LLM  (faster)
---no-llm   Rule engine only          (no Ollama needed)
+### Run the pipeline (generate alerts)
+
+```bash
+python pipeline.py
 ```
 
-### evaluateur_complet.py
-```
---input    Path to pipeline results JSON
---output   Path to evaluation report JSON
+### Launch the dashboard
+
+```bash
+streamlit run dashboard_soc.py
 ```
 
 ---
 
-## Scoring Dimensions (Evaluator)
+## 📊 Example Output
 
-| Dimension | Weight | Description |
-|-----------|--------|-------------|
-| alert_generated | 2.0 | Was an alert raised with evidence? |
-| correct_alert_type | 2.0 | Correct attack category named? |
-| correct_severity | 1.5 | Severity calibrated to evidence? |
-| tp_fp_correct | 2.0 | TP/FP consistent with FP score? |
-| fp_score_reasonable | 1.0 | FP score in 0–100 range? |
-| mitre_present | 0.5 | MITRE tactic/technique provided? |
-| summary_grounded | 1.0 | Summary references real log values? |
-| no_hallucination | 1.5 | No invented IPs/users/URLs? |
-| recommended_actions | 0.5 | ≥3 specific remediation actions? |
-| escalation_correct | 0.5 | Escalation decision justified? |
-| **Max** | **12.5** | Normalized to /10 |
+* Alerts with severity (Critical / High / Medium / Low)
+* Attack types (SQLi, XSS, Brute Force…)
+* Campaign detection
+* MITRE mapping
+* Threat Intel enrichment
+* SOAR actions
 
 ---
 
-## False Positive Score (0–100)
+## 🧠 Technologies Used
 
-| Range | Classification |
-|-------|---------------|
-| 0–30 | Confirmed True Positive |
-| 31–60 | Uncertain — analyst review |
-| 61–80 | Likely False Positive |
-| 81–100 | Confirmed False Positive |
-
----
-
-## Anti-Hallucination Layers
-
-| Layer | Where | What it checks |
-|-------|-------|---------------|
-| Prompt grounding | prompts.py | "Only reference values in the log" |
-| Pre-analysis hints | log_parser.py | Annotates null fields, pre-flags TP/FP |
-| Post-generation validation | hallucination_guard.py | IP/URL/user must appear in raw log |
-| FP logic check | hallucination_guard.py | HTTP 403 ≠ True Positive |
-| Temperature=0 | chain.py | Deterministic LLM output |
+* Python
+* Streamlit
+* Pandas
+* Plotly
+* Ollama (Llama3)
+* Docker
+* JSON-based pipeline
 
 ---
 
-## Bug Fixes vs Original (v1.0)
+## 🔐 Use Cases
 
-| Issue | Root Cause | Fix |
-|-------|-----------|-----|
-| `'str' object has no attribute 'get'` | `process_log()` passed a raw dict to rules then formatted it to string — LLM path received a string | `main.py` now passes the normalized dict to rules and the formatted string to LLM separately |
-| Dashboard crashed | `normalize_results()` read wrong keys (`analysis`, `alert_id`) | Rewritten to read v2.0 schema (`alert`, `result_id`, etc.) |
-| Evaluator couldn't ground summaries | `result.get("raw_log")` was never stored | `main.py` now stores `raw_log` in every result |
-| Rule alerts missing MITRE, TP/FP fields | Rule engine returned minimal dicts | Rule engine now returns full alert schema with MITRE, TP/FP, escalation |
-| LLM called even for obvious FPs | No pre-filtering | Added `LIKELY_FP` pre-assessment skip |
-| Plotly charts broken | Wrong column names | All charts rebuilt with correct DataFrame columns |
-| Missing Streamlit/Plotly in requirements | Only langchain listed | Full requirements.txt with all deps |
+* SOC Analyst training
+* Cybersecurity research projects
+* SIEM/SOAR simulation
+* Log analysis automation
+* AI-powered threat detection
 
 ---
 
-*SOC Assistant v2.0 — Production Grade | May 2026*
+## ⚠️ Limitations
+
+* Uses simulated or offline Threat Intelligence (no live feeds by default)
+* JSON-based storage (not scalable like SIEM tools)
+* LLM output may require validation (hallucination handling included)
+
+---
+
+## 🔮 Future Improvements
+
+* Real-time log streaming (Kafka)
+* Integration with SIEM tools (Splunk / ELK)
+* API backend (FastAPI)
+* Database support (PostgreSQL / Elasticsearch)
+* Live Threat Intelligence APIs
+
+---
+
+## 👩‍💻 Author
+
+**Asmaa Bensair**
+Cybersecurity Student | SOC Analyst Enthusiast
+
+

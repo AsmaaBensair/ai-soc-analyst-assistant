@@ -1,0 +1,23 @@
+{
+  "feedback": [
+    {
+      "result_id": "GEN-0002",
+      "alert_type": "XSS",
+      "analyst_verdict": "TRUE_POSITIVE",
+      "analyst_note": "correct",
+      "recorded_at": "2026-05-06T16:57:44.132336+00:00"
+    },
+    {
+      "result_id": "GEN-0007",
+      "alert_type": "Malicious Scan",
+      "analyst_verdict": "TRUE_POSITIVE",
+      "analyst_note": "correct",
+      "recorded_at": "2026-05-06T17:32:02.420852+00:00"
+    }
+  ],
+  "adjustments": {
+    "XSS": -2.0,
+    "Malicious Scan": -2.0
+  },
+  "updated_at": "2026-05-06T17:32:02.426457+00:00"
+}
