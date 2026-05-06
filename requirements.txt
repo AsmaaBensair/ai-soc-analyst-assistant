@@ -1,0 +1,22 @@
+# Core LLM
+langchain>=0.2.0
+langchain-ollama>=0.1.0
+langchain-core>=0.2.0
+
+# RAG / Vector Store
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+
+# Dashboard
+streamlit>=1.35.0
+plotly>=5.22.0
+pandas>=2.2.0
+pandas
+streamlit
+
+# HTTP / ELK client
+requests>=2.31.0
+elasticsearch>=8.13.0
+
+# Utilities
+python-dotenv>=1.0.0
