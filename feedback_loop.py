@@ -1,9 +1,3 @@
-"""
-feedback_loop.py — Supervised Feedback Loop (NEW v3)
-SOC Assistant v3.0 — Enterprise Grade
-
-Allows SOC analysts to mark alerts as TP/FP and trains scoring adjustments.
-"""
 
 import json
 import os

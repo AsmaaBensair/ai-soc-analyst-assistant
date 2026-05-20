@@ -1,8 +1,3 @@
-"""
-hallucination_guard.py — Anti-hallucination validation for generated SOC alerts
-SOC Assistant v3.0 — Enterprise Grade
-"""
-
 import json
 import re
 from typing import List, Optional

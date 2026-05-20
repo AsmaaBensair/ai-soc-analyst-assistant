@@ -1,6 +1,6 @@
 services:
 
-  # ─── Service 1: Ollama — Local LLM engine ─────────────────────────────────
+
   ollama:
     image: ollama/ollama
     container_name: soc_ollama
@@ -16,7 +16,7 @@ services:
       retries: 10
       start_period: 60s
 
-  # ─── Service 2: Pull llama3 (runs once then exits) ────────────────────────
+
   ollama_pull:
     image: ollama/ollama
     container_name: soc_model_pull
@@ -28,7 +28,7 @@ services:
     entrypoint: ["ollama", "pull", "llama3"]
     restart: "no"
 
-  # ─── Service 3: SOC Pipeline ──────────────────────────────────────────────
+
   soc_pipeline:
     image: python:3.11-slim
     container_name: soc_pipeline
@@ -49,7 +49,7 @@ services:
                  --limit  20"
     restart: "no"
 
-  # ─── Service 4: Evaluator ─────────────────────────────────────────────────
+
   soc_evaluator:
     image: python:3.11-slim
     container_name: soc_evaluator
@@ -65,7 +65,7 @@ services:
                  --output data/evaluation_report.json"
     restart: "no"
 
-  # ─── Service 5: Streamlit Dashboard ───────────────────────────────────────
+  
   soc_dashboard:
     image: python:3.11-slim
     container_name: soc_dashboard

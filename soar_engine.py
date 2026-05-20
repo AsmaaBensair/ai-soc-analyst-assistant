@@ -1,19 +1,8 @@
-"""
-soar_engine.py — SOAR Orchestration Engine (NEW v3)
-SOC Assistant v3.0 — Enterprise Grade
-
-Provides automated response playbooks triggered by alert types and severity.
-No external connections — all actions are logged for human review.
-"""
-
 import json
 from datetime import datetime, timezone
 from typing import List, Dict
 
 
-# ─────────────────────────────────────────────
-# PLAYBOOK DEFINITIONS
-# ─────────────────────────────────────────────
 
 PLAYBOOKS: Dict[str, dict] = {
     "Brute Force": {
@@ -178,10 +167,6 @@ DEFAULT_PLAYBOOK = {
     "mitre_ref": "N/A",
 }
 
-
-# ─────────────────────────────────────────────
-# SOAR ENGINE
-# ─────────────────────────────────────────────
 
 class SOAREngine:
 

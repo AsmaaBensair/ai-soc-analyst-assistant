@@ -1,0 +1,76 @@
+[
+  {
+    "type": "web",
+    "datetime": "2026-05-13T12:00:00Z",
+    "ip": "185.199.110.153",
+    "host": "finance01",
+    "method": "GET",
+    "url": "/backup/download?id=full-db",
+    "status": 200,
+    "agent": "Mozilla/5.0",
+    "message": "Unexpected bulk archive download initiated"
+  },
+
+  {
+    "type": "web",
+    "datetime": "2026-05-13T12:01:00Z",
+    "ip": "91.121.88.14",
+    "host": "hr01",
+    "method": "POST",
+    "url": "/employee/export",
+    "status": 200,
+    "agent": "python-httpx/0.26",
+    "message": "Large employee dataset exported externally"
+  },
+
+  {
+    "type": "web",
+    "datetime": "2026-05-13T12:02:00Z",
+    "ip": "45.83.22.91",
+    "host": "admin01",
+    "method": "GET",
+    "url": "/private/reports",
+    "status": 200,
+    "agent": "curl/8.0",
+    "message": "Accessed restricted reporting area outside business hours"
+  },
+
+  {
+    "type": "application",
+    "datetime": "2026-05-13T12:03:00Z",
+    "ip": "8.8.8.8",
+    "host": "app01",
+    "message": "Authentication bypass suspected due to invalid session state"
+  },
+
+  {
+    "type": "application",
+    "datetime": "2026-05-13T12:04:00Z",
+    "ip": "34.77.12.44",
+    "host": "api01",
+    "message": "Multiple token refresh operations detected for disabled account"
+  },
+
+  {
+    "type": "syslog",
+    "month": "May",
+    "day": "13",
+    "time": "12:05:00",
+    "host": "db01",
+    "process": "postgres",
+    "pid": "8811",
+    "message": "Remote administrative session established for database maintenance"
+  },
+
+  {
+    "type": "web",
+    "datetime": "2026-05-13T12:06:00Z",
+    "ip": "103.44.19.200",
+    "host": "gateway01",
+    "method": "POST",
+    "url": "/api/v2/session",
+    "status": 200,
+    "agent": "Go-http-client/1.1",
+    "message": "Session token issued from unusual geographic region"
+  }
+]

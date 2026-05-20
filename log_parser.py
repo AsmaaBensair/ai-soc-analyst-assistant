@@ -1,7 +1,3 @@
-"""
-log_parser.py — Raw log normalization + ECS enrichment + Multi-log correlation
-SOC Assistant v3.0 — Enterprise Grade
-"""
 
 import re
 import json
@@ -219,9 +215,6 @@ def normalize_log(raw: dict) -> dict:
     return normalized
 
 
-# ─────────────────────────────────────────────
-# MULTI-LOG CORRELATION ENGINE (v3)
-# ─────────────────────────────────────────────
 
 def correlate_logs(norm_logs: List[dict]) -> Dict[str, dict]:
     ip_groups: Dict[str, List[dict]] = defaultdict(list)

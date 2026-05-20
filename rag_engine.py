@@ -1,6 +1,3 @@
-"""
-rag_engine.py — RAG Engine for SOC Assistant v3.0
-"""
 import hashlib
 import re
 from typing import Optional

@@ -1,8 +1,3 @@
-"""
-evaluateur_complet.py — Alert Quality Evaluator v3.0
-SOC Assistant v3.0 — Enterprise Grade
-Scores on 12 dimensions including TI enrichment, SOAR, and correlation.
-"""
 
 import json
 import argparse
@@ -19,8 +14,8 @@ WEIGHTS = {
     "no_hallucination":   1.5,
     "recommended_actions":0.5,
     "escalation_correct": 0.5,
-    "risk_score_valid":   0.5,   # NEW v3
-    "soar_present":       0.5,   # NEW v3
+    "risk_score_valid":   0.5,  
+    "soar_present":       0.5,   
 }
 MAX_SCORE = sum(WEIGHTS.values())
 
@@ -59,7 +54,7 @@ class AlertEvaluateur:
         is_alert = alert.get("is_alert", False)
         evidence = alert.get("attack_evidence", [])
 
-        # 1. Alert Generated
+        
         if is_alert and evidence:
             pts, reason = WEIGHTS["alert_generated"], "Alert with supporting evidence"
         elif is_alert:
@@ -69,7 +64,7 @@ class AlertEvaluateur:
         bd["alert_generated"] = {"score": round(pts,2), "max": WEIGHTS["alert_generated"], "reason": reason}
         total += pts
 
-        # 2. Attack Type
+       
         atype = alert.get("alert_type", "")
         known = ["Brute Force","XSS","SQL Injection","Path Traversal","Command Injection",
                  "Privilege Escalation","Defense Evasion","Malicious Scan","User Enumeration",
@@ -85,7 +80,7 @@ class AlertEvaluateur:
         bd["correct_alert_type"] = {"score": round(pts,2), "max": WEIGHTS["correct_alert_type"], "reason": reason}
         total += pts
 
-        # 3. Severity
+      
         severity = alert.get("severity", "")
         fp_score = alert.get("false_positive_score", 50)
         outcome  = alert.get("outcome", "")
@@ -104,7 +99,7 @@ class AlertEvaluateur:
         bd["correct_severity"] = {"score": round(pts,2), "max": WEIGHTS["correct_severity"], "reason": reason}
         total += pts
 
-        # 4. TP/FP
+        
         is_tp = alert.get("true_positive", False)
         is_fp = alert.get("false_positive", False)
         if is_tp and is_fp:
@@ -120,7 +115,7 @@ class AlertEvaluateur:
         bd["tp_fp_correct"] = {"score": round(pts,2), "max": WEIGHTS["tp_fp_correct"], "reason": reason}
         total += pts
 
-        # 5. FP Score Range
+       
         if isinstance(fp_score, (int, float)) and 0 <= fp_score <= 100:
             pts, reason = WEIGHTS["fp_score_reasonable"], f"FP={fp_score} valid"
         else:
@@ -128,7 +123,7 @@ class AlertEvaluateur:
         bd["fp_score_reasonable"] = {"score": round(pts,2), "max": WEIGHTS["fp_score_reasonable"], "reason": reason}
         total += pts
 
-        # 6. MITRE
+       
         has_mitre = (alert.get("mitre_tactic") not in (None,"null","") and
                      alert.get("mitre_technique_id") not in (None,"null",""))
         if has_mitre and is_alert:
@@ -140,7 +135,7 @@ class AlertEvaluateur:
         bd["mitre_present"] = {"score": round(pts,2), "max": WEIGHTS["mitre_present"], "reason": reason}
         total += pts
 
-        # 7. Summary Grounded
+        
         verified = sum(1 for f in ("source_ip","target_host","user","target_url")
                        if alert.get(f) and str(alert.get(f)).lower() in raw_str)
         if verified >= 2:
@@ -154,7 +149,7 @@ class AlertEvaluateur:
         bd["summary_grounded"] = {"score": round(pts,2), "max": WEIGHTS["summary_grounded"], "reason": reason}
         total += pts
 
-        # 8. No Hallucination
+      
         halluc  = alert.get("hallucination_detected", False)
         h_flags = alert.get("hallucination_flags", [])
         if not halluc:
@@ -166,7 +161,7 @@ class AlertEvaluateur:
         bd["no_hallucination"] = {"score": round(pts,2), "max": WEIGHTS["no_hallucination"], "reason": reason}
         total += pts
 
-        # 9. Recommended Actions
+      
         actions = alert.get("recommended_actions", [])
         if len(actions) >= 3:
             pts, reason = WEIGHTS["recommended_actions"], f"{len(actions)} actions"
@@ -177,7 +172,7 @@ class AlertEvaluateur:
         bd["recommended_actions"] = {"score": round(pts,2), "max": WEIGHTS["recommended_actions"], "reason": reason}
         total += pts
 
-        # 10. Escalation
+       
         escalate   = alert.get("escalate_to_soc_level2")
         esc_reason = alert.get("escalation_reason", "")
         if escalate is not None and esc_reason:
@@ -192,7 +187,7 @@ class AlertEvaluateur:
         bd["escalation_correct"] = {"score": round(pts,2), "max": WEIGHTS["escalation_correct"], "reason": reason}
         total += pts
 
-        # 11. Risk Score Valid (NEW v3)
+    
         risk_score = alert.get("risk_score")
         if risk_score is not None and isinstance(risk_score, (int, float)) and 0 <= risk_score <= 100:
             pts, reason = WEIGHTS["risk_score_valid"], f"Risk score {risk_score} valid"
@@ -201,7 +196,7 @@ class AlertEvaluateur:
         bd["risk_score_valid"] = {"score": round(pts,2), "max": WEIGHTS["risk_score_valid"], "reason": reason}
         total += pts
 
-        # 12. SOAR Present (NEW v3)
+     
         soar = alert.get("soar_response", {})
         if soar and soar.get("playbook_name"):
             pts, reason = WEIGHTS["soar_present"], f"SOAR: {soar.get('playbook_name')}"

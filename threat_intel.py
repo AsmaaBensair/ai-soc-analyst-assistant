@@ -1,11 +1,3 @@
-"""
-threat_intel.py — External Threat Intelligence Integration (NEW v3)
-SOC Assistant v3.0 — Enterprise Grade
-
-Provides IP reputation lookup via free/open TI feeds.
-Falls back gracefully if offline.
-"""
-
 import re
 import json
 import hashlib
@@ -18,11 +10,6 @@ try:
     REQUESTS_AVAILABLE = True
 except ImportError:
     REQUESTS_AVAILABLE = False
-
-# ─────────────────────────────────────────────
-# EMBEDDED KNOWN-BAD IP / CIDR LIST
-# (Tor exit nodes, common scanner ranges, etc.)
-# ─────────────────────────────────────────────
 
 KNOWN_MALICIOUS_IPS = {
     # Tor exit nodes (sample)
@@ -40,7 +27,7 @@ KNOWN_MALICIOUS_ASNS = {
     "AS24940",   # Hetzner (commonly abused)
 }
 
-# Simple /8 blocklist for known bad netblocks
+
 BAD_PREFIXES = [
     "185.220.",  # Tor infrastructure
     "5.188.",    # Known bulletproof hosting
@@ -88,9 +75,6 @@ class ThreatIntelEngine:
         }
         self._save_cache()
 
-    # ─────────────────────────────────────────
-    # LOCAL REPUTATION CHECK (always available)
-    # ─────────────────────────────────────────
 
     def local_reputation(self, ip: str) -> dict:
         """Check IP against embedded bad lists."""
@@ -122,9 +106,6 @@ class ThreatIntelEngine:
                           "SUSPICIOUS" if threat_score >= 40 else "CLEAN",
         }
 
-    # ─────────────────────────────────────────
-    # ABUSEIPDB (free API, optional)
-    # ─────────────────────────────────────────
 
     def lookup_abuseipdb(self, ip: str, api_key: str) -> Optional[dict]:
         """Query AbuseIPDB for IP reputation. Requires free API key."""
@@ -158,9 +139,6 @@ class ThreatIntelEngine:
         except Exception:
             return None
 
-    # ─────────────────────────────────────────
-    # MAIN ENRICH FUNCTION
-    # ─────────────────────────────────────────
 
     def enrich_ip(self, ip: str) -> dict:
         """Full TI enrichment for an IP address."""

@@ -10102,5 +10102,92 @@
     "referrer": "-",
     "agent": "Go-http-client/1.1",
     "type": "web"
+  },
+  {
+    "ip": "45.33.12.91",
+    "datetime": "01/Mar/2024:10:12:33 +0000",
+    "method": "POST",
+    "url": "/api/login",
+    "status": "200",
+    "size": "890",
+    "referrer": "-",
+    "agent": "curl/7.68.0",
+    "type": "web",
+    "body": "username=admin&password=admin123"
+  },
+  {
+    "ip": "103.27.59.201",
+    "datetime": "01/Mar/2024:10:15:10 +0000",
+    "method": "POST",
+    "url": "/api/upload",
+    "status": "200",
+    "size": "1024",
+    "referrer": "-",
+    "agent": "python-requests/2.31.0",
+    "type": "web",
+    "filename": "shell.php"
+  },
+  {
+    "ip": "185.199.110.153",
+    "datetime": "01/Mar/2024:10:22:45 +0000",
+    "method": "GET",
+    "url": "/admin/dashboard",
+    "status": "200",
+    "size": "2048",
+    "referrer": "-",
+    "agent": "Mozilla/5.0",
+    "type": "web"
+  },
+  {
+    "month": "Mar",
+    "day": "01",
+    "time": "10:30:12",
+    "host": "db-srv-01",
+    "process": "mysqld",
+    "pid": "9981",
+    "message": "User 'root' logged in from remote host 203.0.113.5",
+    "type": "syslog"
+  },
+  {
+    "month": "Mar",
+    "day": "01",
+    "time": "10:42:55",
+    "host": "web-srv-02",
+    "process": "nginx",
+    "pid": "2211",
+    "message": "access granted for /admin/config from 172.16.0.9",
+    "type": "syslog"
+  },
+  {
+    "ip": "66.249.66.1",
+    "datetime": "01/Mar/2024:11:05:21 +0000",
+    "method": "GET",
+    "url": "/.env",
+    "status": "200",
+    "size": "512",
+    "referrer": "-",
+    "agent": "Mozilla/5.0",
+    "type": "web"
+  },
+  {
+    "ip": "198.51.100.23",
+    "datetime": "01/Mar/2024:11:15:42 +0000",
+    "method": "GET",
+    "url": "/backup.zip",
+    "status": "200",
+    "size": "1048576",
+    "referrer": "-",
+    "agent": "Wget/1.21.1",
+    "type": "web"
+  },
+  {
+    "month": "Mar",
+    "day": "01",
+    "time": "11:25:18",
+    "host": "app-srv-01",
+    "process": "node",
+    "pid": "5567",
+    "message": "Unhandled exception: cannot read property 'password' of undefined",
+    "type": "application"
   }
 ]
