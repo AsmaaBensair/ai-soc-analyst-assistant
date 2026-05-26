@@ -13,11 +13,19 @@
       "analyst_verdict": "TRUE_POSITIVE",
       "analyst_note": "correct",
       "recorded_at": "2026-05-06T17:32:02.420852+00:00"
+    },
+    {
+      "result_id": "GEN-0006",
+      "alert_type": "Path Traversal",
+      "analyst_verdict": "FALSE_POSITIVE",
+      "analyst_note": "its fp",
+      "recorded_at": "2026-05-24T14:26:19.659735+00:00"
     }
   ],
   "adjustments": {
     "XSS": -2.0,
-    "Malicious Scan": -2.0
+    "Malicious Scan": -2.0,
+    "Path Traversal": 2.0
   },
-  "updated_at": "2026-05-06T17:32:02.426457+00:00"
+  "updated_at": "2026-05-24T14:26:19.741389+00:00"
 }

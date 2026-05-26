@@ -1,4 +1,3 @@
-
 import re
 import json
 from typing import List, Dict, Optional
@@ -277,13 +276,13 @@ def format_log_for_llm(log: dict, index: int) -> str:
 
     lines = [
         f"=== LOG #{index} ===",
-        f"Type: {log['log_type']}",
-        f"Source IP: {log['source_ip']}",
-        f"URL: {log['url']}",
-        f"Status: {log['status_code']}",
+        f"Type: {log.get('log_type', 'unknown')}",
+        f"Source IP: {log.get('source_ip')}",
+        f"URL: {log.get('url')}",
+        f"Status: {log.get('status_code')}",
         f"User-Agent: {log.get('user_agent')}",
-        f"Message: {log['message']}",
-        f"Attack hints: {log['attack_hints']}",
+        f"Message: {log.get('message')}",
+        f"Attack hints: {log.get('attack_hints', [])}",
         f"FP Score: {hint.get('fp_score_hint')} — Assessment: {hint.get('pre_assessment')}",
         f"TP Signals: {hint.get('tp_signals')}",
     ]

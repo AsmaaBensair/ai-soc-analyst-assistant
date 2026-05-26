@@ -1,0 +1,8 @@
+@"
+venv/
+__pycache__/
+*.pyc
+rag_db/
+data/results_docker.json
+data/evaluation_report.json
+"@ > .gitignore

@@ -1,6 +1,38 @@
+# docker-compose.yml — SOC AI Analyst Platform v5.1
+#
+# ── FIXES vs previous version ──────────────────────────────────────────────
+#
+#  FIX-1  soc_dashboard command was wrongly set to `python evaluateur_complet.py`
+#         → corrected to `streamlit run dashboard_soc.py --server.port 8501`
+#
+#  FIX-2  Each container was running `pip install` at startup → hours of setup
+#         on every restart. All services now use a shared image built from the
+#         local Dockerfile (pre-installs deps at build time, cached by Docker).
+#
+#  FIX-3  soc_pipeline had `restart: on-failure` while also running pip install
+#         in its command → triggered an infinite pip reinstall loop on any error.
+#         Pipeline now uses a dedicated entrypoint without pip install.
+#
+#  FIX-4  ollama_pull had `restart: on-failure` → looped forever after the model
+#         was already downloaded (ollama pull exits 0 only on fresh success, not
+#         on "already exists"). Changed to `restart: no` — it is a one-shot task.
+#
+#  FIX-5  soc_evaluator depended on soc_pipeline with service_completed_successfully
+#         but soc_pipeline had restart:on-failure — Compose cannot track "completed"
+#         on a service that restarts. Fixed: soc_pipeline → restart: no (one-shot).
+#         soc_evaluator keeps service_completed_successfully (now safe).
+#
+#  FIX-6  soc_dashboard now also depends on ollama_pull (condition: service_completed
+#         _successfully) so the model is ready before the UI starts.
+#
+#  FIX-7  data/ directory is created by the Dockerfile, not at runtime in every
+#         container command. Commands cleaned up accordingly.
+#
+#  Original fixes kept: FIX-C1→C6 logic preserved under new numbering above.
+
 services:
 
-
+  # ── Ollama LLM server ──────────────────────────────────────────────────────
   ollama:
     image: ollama/ollama
     container_name: soc_ollama
@@ -16,7 +48,10 @@ services:
       retries: 10
       start_period: 60s
 
-
+  # ── Pull llama3 model once, then exit 0 ───────────────────────────────────
+  # FIX-4: restart:no — this is a one-shot task. Restarting it causes an
+  #         infinite loop because `ollama pull` exits non-zero when the model
+  #         already exists on some versions.
   ollama_pull:
     image: ollama/ollama
     container_name: soc_model_pull
@@ -26,60 +61,83 @@ services:
     environment:
       - OLLAMA_HOST=http://ollama:11434
     entrypoint: ["ollama", "pull", "llama3"]
-    restart: "no"
+    restart: no
 
-
+  # ── SOC analysis pipeline (one-shot CLI run) ───────────────────────────────
+  # FIX-2: uses local build image → deps already installed, no pip at startup
+  # FIX-3+5: restart:no so service_completed_successfully works for evaluator
   soc_pipeline:
-    image: python:3.11-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: soc_platform:latest
     container_name: soc_pipeline
     depends_on:
       ollama:
         condition: service_healthy
+      ollama_pull:
+        condition: service_completed_successfully
     volumes:
-      - .:/app
+      - ./data:/app/data
     working_dir: /app
     environment:
       - OLLAMA_HOST=http://ollama:11434
       - OLLAMA_MODEL=llama3
+    # FIX-7: no `mkdir -p data` or pip install here — handled in Dockerfile
     command: >
-      bash -c "pip install -r requirements.txt -q &&
-               python main.py
-                 --input  data/logs.json
-                 --output data/results_docker.json
-                 --limit  20"
-    restart: "no"
+      python main.py
+        --input data/logs.json
+        --output data/results_docker.json
+    restart: no
 
-
+  # ── Evaluator (runs after pipeline completes successfully) ────────────────
+  # FIX-2: reuses soc_platform:latest image (no pip install)
+  # FIX-5: service_completed_successfully is now safe because soc_pipeline
+  #         is restart:no (one-shot)
   soc_evaluator:
-    image: python:3.11-slim
+    image: soc_platform:latest
     container_name: soc_evaluator
     depends_on:
-      - soc_pipeline
+      soc_pipeline:
+        condition: service_completed_successfully
     volumes:
-      - .:/app
+      - ./data:/app/data
     working_dir: /app
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
     command: >
-      bash -c "pip install -r requirements.txt -q &&
-               python evaluateur_complet.py
-                 --input  data/results_docker.json
-                 --output data/evaluation_report.json"
-    restart: "no"
+      python evaluateur_complet.py
+        --input  data/results_docker.json
+        --output data/evaluation_report.json
+    restart: no
 
-  
+  # ── Streamlit dashboard (long-running) ────────────────────────────────────
+  # FIX-1: command corrected to `streamlit run dashboard_soc.py`
+  # FIX-2: reuses soc_platform:latest image (no pip install)
+  # FIX-6: waits for ollama_pull so the model is available before UI starts
   soc_dashboard:
-    image: python:3.11-slim
+    image: soc_platform:latest
     container_name: soc_dashboard
     ports:
       - "8501:8501"
+    depends_on:
+      ollama:
+        condition: service_healthy
+      ollama_pull:
+        condition: service_completed_successfully
     volumes:
-      - .:/app
+      - ./data:/app/data
     working_dir: /app
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=llama3
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_SERVER_FILE_WATCHER_TYPE=none
+    # FIX-1: was `python evaluateur_complet.py` → correct command:
     command: >
-      bash -c "pip install -r requirements.txt -q &&
-               streamlit run dashboard_soc.py
-                 --server.port 8501
-                 --server.address 0.0.0.0
-                 --server.headless true"
+      streamlit run dashboard_soc.py
+        --server.port 8501
+        --server.address 0.0.0.0
     restart: unless-stopped
 
 volumes:

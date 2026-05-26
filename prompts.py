@@ -1,3 +1,14 @@
+"""
+prompts.py — SOC analyst system prompts.
+
+SYSTEM_PROMPT           : uses {{ }} escaping → safe inside LangChain ChatPromptTemplate.
+SYSTEM_PROMPT_PLAIN     : uses normal { } → for direct SystemMessage() / non-template use.
+
+main.py's _FAST_SYSTEM_PROMPT is self-contained and does NOT use this file.
+chain.py's analyze_log() uses SYSTEM_PROMPT_PLAIN.
+"""
+
+# Used inside ChatPromptTemplate (LangChain escapes {{ → {, }} → })
 SYSTEM_PROMPT = """
 You are an expert SOC analyst AI.
 
@@ -63,3 +74,6 @@ If the log is benign, return:
   "summary": "No malicious activity detected"
 }}
 """
+
+# Used directly in SystemMessage() — no LangChain template escaping needed
+SYSTEM_PROMPT_PLAIN = SYSTEM_PROMPT.replace("{{", "{").replace("}}", "}")
