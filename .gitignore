@@ -5,4 +5,7 @@ __pycache__/
 rag_db/
 data/results_docker.json
 data/evaluation_report.json
+*.sqlite3
+*.bin
+*.lock
 "@ > .gitignore
